@@ -1,0 +1,33 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+#listView {
+  padding: 10px 15px;
+  margin-bottom: -1px;
+  min-height: 510px;
+  /* Avoid cutout if font or line is bigger */
+  font: inherit;
+}
+.item {
+  position: relative;
+  margin: 0 5px;
+  padding: 15px;
+  border: solid 1px #e6e6e6;
+}
+.item h3 {
+  margin: 0;
+  padding: 3px 5px 0 0;
+  overflow: hidden;
+  line-height: 1.1em;
+  font-size: .9em;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #999;
+}
+.k-listview:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
