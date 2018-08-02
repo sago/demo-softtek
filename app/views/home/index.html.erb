@@ -45,13 +45,13 @@
               </div>
               <div class="col-5">
                 #if(availability){#
-                  <button class="k-button increaseItem">+</button>
-                  <input value="0" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
-                  <button class="k-button decreaseItem">-</button>
+                  <button id="iButton" class="k-button increaseItem">+</button>
+                  <input value="0" class="inputQtty" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
+                  <button id="dButton" class="k-button decreaseItem" disabled>-</button>
                 #}else{#
-                  <button class="k-button increaseItem" disabled >+</button>
-                  <input value="0" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
-                  <button class="k-button decreaseItem" disabled >-</button>
+                  <button id="iButton" class="k-button increaseItem" disabled >+</button>
+                  <input value="0" class="inputQtty" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
+                  <button id="dButton" class="k-button decreaseItem" disabled >-</button>
                 #}#
               </div>
             </div>
@@ -152,8 +152,7 @@
                 dataSource: dataSourceItems,
                 template: kendo.template($("#template").html())
             });            
-                        
-
+                                    
             var itemCounter = 0;
             $(".increaseItem").click(function(){
               itemCounter += 1; 
@@ -178,7 +177,8 @@
                 });                
                 $("#cartTotal").html(formatter.format(sum));
               });              
-              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1)
+              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1)              
+              $(this).nextAll().slice(0, 3).prop('disabled', false);
             });
             
             $(".decreaseItem").click(function(){
@@ -201,7 +201,10 @@
               $(this).prev('input').val( function(i, oldval) {
                 return --oldval;
               });
-              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1)
+              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1)              
+              if( $(this).prev('input').val() == 0 ){                  
+                $(this).prop('disabled', true);              
+              }                            
             });
 
             // Currency Format
