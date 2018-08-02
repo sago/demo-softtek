@@ -1,20 +1,23 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-12">
-      <h2>Item List</h2>
+      <h2>List of Items</h2>
     </div>
   </div>
   <div id="example">
     <div class="demo-section k-content wide">
       <div class="row">
-        <div id="listView" class="col-7"></div>
-        <div class="col-3">
-          <h4>Cart</h4>
-          <div class="row">
-            <div class="col-12">
-              <label>Total:</label>
-              <p id="cart-total">
-              </p>
+        <div id="listView" class="col-5"></div>
+        <div class="col-3 cart">
+          <div class="cartChart">
+            <h4>Cart</h4>
+            <div class="row">
+              <div class="col-12">
+                <label>Total:</label>
+                </br>
+                <p id="cartTotal">
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -22,6 +25,8 @@
     </div>
 
     <script type="text/x-kendo-template" id="template">
+     # var availability = Availability;#
+     # console.log(availability);#
       <div class="row">
         <div class="col-12">
           <div class="item">
@@ -30,14 +35,24 @@
                 <h3>#:Name#</h3>
                 <h3>#:Id#</h3>
                 <h3>#:Category#</h3>
-                <h3>Stock: #:Stock#</h3>
+                <h3>Stock: <span class="stock-lb">#:Stock#</span></h3>
                 <p>#:kendo.toString(Price, "c")#</p>
-                <p>#:Availability#</p>
+                #if(availability){#
+                  <p class="green">Available</p>
+                #}else{#
+                  <p class="red">Not Available</p>
+                #}#
               </div>
               <div class="col-5">
-                <button class="k-button increaseItem">+</button>
-                <input value="0" type="number" title="numeric" min="0" max="#:Stock#" />
-                <button class="k-button decreaseItem">-</button>
+                #if(availability){#
+                  <button class="k-button increaseItem">+</button>
+                  <input value="0" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
+                  <button class="k-button decreaseItem">-</button>
+                #}else{#
+                  <button class="k-button increaseItem" disabled >+</button>
+                  <input value="0" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
+                  <button class="k-button decreaseItem" disabled >-</button>
+                #}#
               </div>
             </div>
           </div>
@@ -131,43 +146,69 @@
                         },
                       ]
             });
+
             var dataSourceCart = new kendo.data.DataSource({aggregate: [{ field: "Price", aggregate: "sum" }] });
             $("#listView").kendoListView({
                 dataSource: dataSourceItems,
                 template: kendo.template($("#template").html())
-            });
-            $(".numeric").kendoNumericTextBox({
-              decimals: 0
-            });
-            $(".increaseItem").click(function(){
-              var id = $(this).parent().parent().children()[0].children[1].textContent
-              var name = $(this).parent().parent().children()[0].children[0].textContent
-              var price = $(this).parent().parent().children()[0].children[4].textContent
-              dataSourceCart.add({ Name: name, Price: price })
-              dataSourceCart.sync
-              //$("#cart-total").html(dataSourceCart._data[0].Price);
+            });            
+                        
 
+            var itemCounter = 0;
+            $(".increaseItem").click(function(){
+              itemCounter += 1; 
               $(this).next('input').val( function(i, oldval) {
                 return ++oldval;
               });
-
-              dataSourceCart.fetch(function(){
-                var results = dataSourceCart.aggregates().Price;
-                $("#cart-total").html(results.sum);
-              });
-            });
-            
-            $(".decreaseItem").click(function(){
+              
               var id = $(this).parent().parent().children()[0].children[1].textContent
               var name = $(this).parent().parent().children()[0].children[0].textContent
               var price = $(this).parent().parent().children()[0].children[4].textContent
+              var qtty = $(this).next('input').val();              
+              var stock = $(this).parent().parent().children()[0].children[3].textContent.replace("Stock: ", "")
+              dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price })
+              dataSourceCart.sync
+              
+              dataSourceCart.fetch(function(){
+                var data = dataSourceCart.data();
+                var sum = 0;
+                console.log(data);
+                data.forEach(function(item) {                  
+                  sum += parseInt(item.Price.replace("$", "").replace(",", ""));
+                });                
+                $("#cartTotal").html(formatter.format(sum));
+              });              
+              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1)
+            });
+            
+            $(".decreaseItem").click(function(){
+              itemCounter -= 1;
+              var id = $(this).parent().parent().children()[0].children[1].textContent
+              var name = $(this).parent().parent().children()[0].children[0].textContent
+              var price = $(this).parent().parent().children()[0].children[4].textContent
+              var stock = $(this).parent().parent().children()[0].children[3].textContent.replace("Stock: ", "")
               dataItem = dataSourceCart.get(id);
               dataSourceCart.remove(dataItem);
               dataSourceCart.fetch(function(){
-                var results = dataSourceCart.aggregates().price;
-                $("#cart-total").html(results.sum);
+                var data = dataSourceCart.data();
+                var sum = 0;
+                console.log(data);
+                data.forEach(function(item) {                  
+                  sum += parseInt(item.Price.replace("$", "").replace(",", ""));
+                });                
+                $("#cartTotal").html(formatter.format(sum));
               });
-              $(this).prev('input').attr('id')
+              $(this).prev('input').val( function(i, oldval) {
+                return --oldval;
+              });
+              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1)
+            });
+
+            // Currency Format
+            var formatter = new Intl.NumberFormat('es-MX', {
+              style: 'currency',
+              currency: 'MXN',
+              minimumFractionDigits: 2,              
             });
             
         });

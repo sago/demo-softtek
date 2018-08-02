@@ -1,6 +1,4 @@
-// Place all the styles related to the home controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+// Kendo ListView
 #listView {
   padding: 10px 15px;
   margin-bottom: -1px;
@@ -13,6 +11,7 @@
   margin: 0 5px;
   padding: 15px;
   border: solid 1px #e6e6e6;
+  max-width: 86%;
 }
 .item h3 {
   margin: 0;
@@ -30,4 +29,21 @@
   height: 0;
   clear: both;
   visibility: hidden;
+}
+
+// Cart
+#cartTotal {
+  font-size: 20px;
+}
+.cart {
+  text-align: center;
+}
+.cartChart {
+  border: solid 3px red;
+}
+.green {
+  color: green;
+}
+.red {
+  color: red;
 }
