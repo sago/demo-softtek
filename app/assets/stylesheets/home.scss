@@ -47,3 +47,28 @@
 .red {
   color: red;
 }
+ // Notification
+ .k-notification-info.k-group {
+  background: rgba(0%,0%,0%,.7);
+  color: #fff;
+}
+.new-noti {
+  width: 300px;
+  height: 60px;
+  padding: 20px;
+}
+.new-noti h3 {
+  font-size: 1em;  
+}
+.k-notification-error.k-group {
+  background: rgba(100%,0%,0%,.7);
+  color: #ffffff;
+}
+.wrong-pass {
+  width: 300px;
+  height: 60px;
+  padding: 20px;
+}
+.wrong-pass h3 {
+  font-size: 1em;  
+}
