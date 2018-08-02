@@ -1,6 +1,7 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-12">
+      <span id="notification" style="display:none;"></span>
       <h2>List of Items</h2>
     </div>
   </div>
@@ -24,6 +25,22 @@
       </div>
     </div>
 
+    <!-- Notifications Templates -->
+    <script id="notiTemplate" type="text/x-kendo-template">
+      <div class="new-noti">      
+        <h3>#= title #</h3>
+        <p>#= message #</p>
+      </div>
+    </script>
+
+    <script id="errorTemplate" type="text/x-kendo-template">
+      <div class="wrong-pass">          
+        <h3>#= title #</h3>
+        <p>#= message #</p>
+      </div>
+    </script>
+
+    <!-- ListView Template -->
     <script type="text/x-kendo-template" id="template">
      # var availability = Availability;#
      # console.log(availability);#
@@ -179,6 +196,7 @@
               });              
               $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1)              
               $(this).nextAll().slice(0, 3).prop('disabled', false);
+              notification.show({ title: "Cart Updated!", message: "New item has been added!"}, "info");
             });
             
             $(".decreaseItem").click(function(){
@@ -205,6 +223,7 @@
               if( $(this).prev('input').val() == 0 ){                  
                 $(this).prop('disabled', true);              
               }                            
+              notification.show({ title: "Cart Updated!", message: "Item has been removed!"}, "error");
             });
 
             // Currency Format
@@ -213,6 +232,24 @@
               currency: 'MXN',
               minimumFractionDigits: 2,              
             });
+
+            // Notification
+            var notification = $("#notification").kendoNotification({
+                position: {
+                    pinned: true,
+                    top: 30,
+                    right: 30
+                },
+                autoHideAfter: 0,
+                stacking: "down",
+                templates: [{
+                    type: "info",
+                    template: $("#notiTemplate").html()
+                },{
+                    type: "error",
+                    template: $("#errorTemplate").html()
+                }]
+            }).data("kendoNotification");
             
         });
     </script>
