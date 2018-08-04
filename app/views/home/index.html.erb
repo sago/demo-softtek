@@ -1,48 +1,57 @@
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-12">
-      <span id="notification" style="display:none;"></span>
-      <h2>List of Items</h2>
+<div id="application">
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-12">
+        <span id="notification" style="display:none;"></span>
+        <h2>List of Items</h2>
+      </div>
     </div>
-  </div>
-  <div id="example">
-    <div class="demo-section k-content wide">
-      <div class="row">
-        <div id="listView" class="col-5"></div>
-        <div class="col-3 cart">
-          <div class="cartChart">
-            <h4>Cart</h4>
-            <div class="row">
-              <div class="col-12">
-                <label>Total:</label>
-                </br>
-                <p id="cartTotal">
-                </p>
+    <div id="example">
+      <div class="demo-section k-content wide">
+        <div class="row">
+          <div  class="col-5" 
+                data-role="listview" 
+                data-template="list-view-template" 
+                data-bind="source: items">
+          </div>
+          <div class="col-3 cart">
+            <div class="cartChart">
+              <h4>Cart</h4>
+              <div class="row">
+                <div class="col-12">
+                  <label>Total:</label>
+                  </br>
+                  <p id="cartTotal">
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Notifications Templates -->
-    <script id="notiTemplate" type="text/x-kendo-template">
-      <div class="new-noti">      
-        <h3>#= title #</h3>
-        <p>#= message #</p>
-      </div>
-    </script>
+<!-- Notifications Templates -->
 
-    <script id="errorTemplate" type="text/x-kendo-template">
-      <div class="wrong-pass">          
-        <h3>#= title #</h3>
-        <p>#= message #</p>
-      </div>
-    </script>
+<script id="notiTemplate" type="text/x-kendo-template">
+  <div class="new-noti">      
+    <h3>#= title #</h3>
+    <p>#= message #</p>
+  </div>
+</script>
 
-    <!-- ListView Template -->
-    <script type="text/x-kendo-template" id="template">
-     # var availability = Availability;#
+<script id="errorTemplate" type="text/x-kendo-template">
+  <div class="wrong-pass">          
+    <h3>#= title #</h3>
+    <p>#= message #</p>
+  </div>
+</script>
+    
+<!-- ListView Template -->
+<script type="text/x-kendo-template" id="list-view-template">
+    # var availability = Availability;#
      # console.log(availability);#
       <div class="row">
         <div class="col-12">
@@ -62,201 +71,194 @@
               </div>
               <div class="col-5">
                 #if(availability){#
-                  <button id="iButton" class="k-button increaseItem">+</button>
+                  <button id="iButton" class="k-button increaseItem" data-bind="click: clickInc">+</button>
                   <input value="0" class="inputQtty" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
-                  <button id="dButton" class="k-button decreaseItem" disabled>-</button>
+                  <button id="dButton" class="k-button decreaseItem" data-bind="click: clickDec }" disabled>-</button>
                 #}else{#
-                  <button id="iButton" class="k-button increaseItem" disabled >+</button>
+                  <button id="iButton" class="k-button increaseItem" data-bind="click: clickInc" disabled >+</button>
                   <input value="0" class="inputQtty" type="number" title="numeric" style="height: 26px;" min="0" max="#:Stock#" />
-                  <button id="dButton" class="k-button decreaseItem" disabled >-</button>
+                  <button id="dButton" class="k-button decreaseItem" data-bind="click: clickDec }" disabled >-</button>
                 #}#
               </div>
             </div>
           </div>
         </div>        
       </div>
-    </script>
+</script>
 
-    <script>
-        $(function() {
-            var dataSourceItems = new kendo.data.DataSource({
-                data: [
-                        { 
-                          "Id":"878637-010",
-                          "Name":"ZOOM KD 9 ELITE HYPER ORANGE",
-                          "Category": "Basketball",
-                          "Stock":15,
-                          "Price":2899.00,
-                          "Availability": true
-                        },
-                        { 
-                          "Id":"852405-004",
-                          "Name":"LEBRON XIV",
-                          "Category": "Basketball",
-                          "Stock":10,
-                          "Price":3699.00,
-                          "Availability": true
-                        },
-                        { 
-                          "Id":"881465-120",
-                          "Name":"JORDAN FORMULA 23",
-                          "Category": "Basketball",
-                          "Stock":5,
-                          "Price":2399.00,
-                          "Availability": true
-                        },
-                        { 
-                          "Id":"852422-601",
-                          "Name":"ZOOM REV 2017",
-                          "Category": "Basketball",
-                          "Stock":0,
-                          "Price":1999.00,
-                          "Availability": false
-                        },
-                        { 
-                          "Id":"852473-600",
-                          "Name":"MAMBA INSTINCT",
-                          "Category": "Basketball",
-                          "Stock":0,
-                          "Price":1799.00,
-                          "Availability": false
-                        },
-                        { 
-                          "Id":"917391-010",
-                          "Name":"PLAYERA DRY KD",
-                          "Category": "Shirts",
-                          "Stock":20,
-                          "Price":549,
-                          "Availability":true
-                        },
-                        { 
-                          "Id":"843130-477",
-                          "Name":"PLAYERA AIR JORDAN 23",
-                          "Category": "Shirts",
-                          "Stock":40,
-                          "Price":549.00,
-                          "Availability":true
-                        },
-                        { 
-                          "Id":"831348-100",
-                          "Name":"SHORT ULTIMATE FLIGHT",
-                          "Category": "Shorts",
-                          "Stock":10,
-                          "Price":899.00,
-                          "Availability": true
-                        },
-                        { 
-                          "Id":"836277-457",
-                          "Name":"SHORT FT GX FRANCHISE",
-                          "Category": "Shorts",
-                          "Stock":10,
-                          "Price":849,
-                          "Availability":true
-                        },
-                        { 
-                          "Id":"1281295-002",
-                          "Name":"SHORT SC30 TOP GUN",
-                          "Category": "Shorts",
-                          "Stock":5,
-                          "Price":799,
-                          "Availability": true
-                        },
-                      ]
-            });
-
-            var dataSourceCart = new kendo.data.DataSource({aggregate: [{ field: "Price", aggregate: "sum" }] });
-            $("#listView").kendoListView({
-                dataSource: dataSourceItems,
-                template: kendo.template($("#template").html())
-            });            
-                                    
-            var itemCounter = 0;
-            $(".increaseItem").click(function(){
-              itemCounter += 1; 
-              $(this).next('input').val( function(i, oldval) {
-                return ++oldval;
-              });
-              
-              var id = $(this).parent().parent().children()[0].children[1].textContent
-              var name = $(this).parent().parent().children()[0].children[0].textContent
-              var price = $(this).parent().parent().children()[0].children[4].textContent
-              var qtty = $(this).next('input').val();              
-              var stock = $(this).parent().parent().children()[0].children[3].textContent.replace("Stock: ", "")
-              dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price })
-              dataSourceCart.sync
-              
-              dataSourceCart.fetch(function(){
-                var data = dataSourceCart.data();
-                var sum = 0;
-                console.log(data);
-                data.forEach(function(item) {                  
-                  sum += parseInt(item.Price.replace("$", "").replace(",", ""));
-                });                
-                $("#cartTotal").html(formatter.format(sum));
-              });              
-              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1)              
-              $(this).nextAll().slice(0, 3).prop('disabled', false);
-              notification.show({ title: "Cart Updated!", message: "New item has been added!"}, "info");
-            });
-            
-            $(".decreaseItem").click(function(){
-              itemCounter -= 1;
-              var id = $(this).parent().parent().children()[0].children[1].textContent
-              var name = $(this).parent().parent().children()[0].children[0].textContent
-              var price = $(this).parent().parent().children()[0].children[4].textContent
-              var stock = $(this).parent().parent().children()[0].children[3].textContent.replace("Stock: ", "")
-              dataItem = dataSourceCart.get(id);
-              dataSourceCart.remove(dataItem);
-              dataSourceCart.fetch(function(){
-                var data = dataSourceCart.data();
-                var sum = 0;
-                console.log(data);
-                data.forEach(function(item) {                  
-                  sum += parseInt(item.Price.replace("$", "").replace(",", ""));
-                });                
-                $("#cartTotal").html(formatter.format(sum));
-              });
-              $(this).prev('input').val( function(i, oldval) {
-                return --oldval;
-              });
-              $(this).parent().parent().children()[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1)              
-              if( $(this).prev('input').val() == 0 ){                  
-                $(this).prop('disabled', true);              
-              }                            
-              notification.show({ title: "Cart Updated!", message: "Item has been removed!"}, "error");
-            });
-
-            // Currency Format
-            var formatter = new Intl.NumberFormat('es-MX', {
-              style: 'currency',
-              currency: 'MXN',
-              minimumFractionDigits: 2,              
-            });
-
-            // Notification
-            var notification = $("#notification").kendoNotification({
-                position: {
-                    pinned: true,
-                    top: 30,
-                    right: 30
-                },
-                autoHideAfter: 0,
-                stacking: "down",
-                templates: [{
-                    type: "info",
-                    template: $("#notiTemplate").html()
-                },{
-                    type: "error",
-                    template: $("#errorTemplate").html()
-                }]
-            }).data("kendoNotification");
-            
-        });
-    </script>
-  </div>
-</div>
-
-
+<!-- Script -->
 <script>
-  var viewModel = kendo.observable();
+  // Notification
+  var notification = $("#notification").kendoNotification({
+      position: {
+          pinned: true,
+          top: 30,
+          right: 30
+      },
+      autoHideAfter: 0,
+      stacking: "down",
+      templates: [{
+          type: "info",
+          template: $("#notiTemplate").html()
+      },{
+          type: "error",
+          template: $("#errorTemplate").html()
+      }]
+  }).data("kendoNotification");
+
+  // DataSource Items
+  var dataSourceItems = new kendo.data.DataSource({
+        data: [
+                { 
+                  "Id":"878637-010",
+                  "Name":"ZOOM KD 9 ELITE HYPER ORANGE",
+                  "Category": "Basketball",
+                  "Stock":15,
+                  "Price":2899.00,
+                  "Availability": true
+                },
+                { 
+                  "Id":"852405-004",
+                  "Name":"LEBRON XIV",
+                  "Category": "Basketball",
+                  "Stock":10,
+                  "Price":3699.00,
+                  "Availability": true
+                },
+                { 
+                  "Id":"881465-120",
+                  "Name":"JORDAN FORMULA 23",
+                  "Category": "Basketball",
+                  "Stock":5,
+                  "Price":2399.00,
+                  "Availability": true
+                },
+                { 
+                  "Id":"852422-601",
+                  "Name":"ZOOM REV 2017",
+                  "Category": "Basketball",
+                  "Stock":0,
+                  "Price":1999.00,
+                  "Availability": false
+                },
+                { 
+                  "Id":"852473-600",
+                  "Name":"MAMBA INSTINCT",
+                  "Category": "Basketball",
+                  "Stock":0,
+                  "Price":1799.00,
+                  "Availability": false
+                },
+                { 
+                  "Id":"917391-010",
+                  "Name":"PLAYERA DRY KD",
+                  "Category": "Shirts",
+                  "Stock":20,
+                  "Price":549,
+                  "Availability":true
+                },
+                { 
+                  "Id":"843130-477",
+                  "Name":"PLAYERA AIR JORDAN 23",
+                  "Category": "Shirts",
+                  "Stock":40,
+                  "Price":549.00,
+                  "Availability":true
+                },
+                { 
+                  "Id":"831348-100",
+                  "Name":"SHORT ULTIMATE FLIGHT",
+                  "Category": "Shorts",
+                  "Stock":10,
+                  "Price":899.00,
+                  "Availability": true
+                },
+                { 
+                  "Id":"836277-457",
+                  "Name":"SHORT FT GX FRANCHISE",
+                  "Category": "Shorts",
+                  "Stock":10,
+                  "Price":849,
+                  "Availability":true
+                },
+                { 
+                  "Id":"1281295-002",
+                  "Name":"SHORT SC30 TOP GUN",
+                  "Category": "Shorts",
+                  "Stock":5,
+                  "Price":799,
+                  "Availability": true
+                },
+              ]      
+  });
+  
+  // DataSource Total
+  var dataSourceCart = new kendo.data.DataSource({aggregate: [{ field: "Price", aggregate: "sum" }] });
+
+  // Var Counter
+  var itemCounter = 0;
+
+  // Currency Format
+  var formatter = new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN',
+    minimumFractionDigits: 2,              
+  });
+
+  // Kendo Observable
+  var viewModelListview = kendo.observable({    
+    items: dataSourceItems,
+    clickInc : function(e){      
+      itemCounter += 1;      
+      var id = e.target.parentElement.parentElement.children[0].children[1].textContent;
+      var name = e.target.parentElement.parentElement.children[0].children[0].textContent;
+      var price = e.target.parentElement.parentElement.children[0].children[4].textContent;
+      var stock = e.target.parentElement.parentElement.children[0].children[3].textContent.replace("Stock: ", "");      
+      e.target.nextElementSibling.value = Number(e.target.nextElementSibling.value) + 1
+      var qtty = e.target.nextElementSibling.value;
+
+      dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price })
+      dataSourceCart.sync
+      
+      dataSourceCart.fetch(function(){
+        var data = dataSourceCart.data();
+        var sum = 0;
+        console.log(data);
+        data.forEach(function(item) {                  
+          sum += parseInt(item.Price.replace("$", "").replace(",", ""));
+        });                
+        $("#cartTotal").html(formatter.format(sum));
+      });              
+      e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1); 
+      e.target.nextElementSibling.nextElementSibling.disabled = false
+      notification.show({ title: "Cart Updated!", message: "New item has been added!"}, "info");
+    },
+    clickDec: function(e){
+      itemCounter -= 1;
+      var id = e.target.parentElement.parentElement.children[0].children[1].textContent;
+      var name = e.target.parentElement.parentElement.children[0].children[0].textContent;
+      var price = e.target.parentElement.parentElement.children[0].children[4].textContent;
+      var stock = e.target.parentElement.parentElement.children[0].children[3].textContent.replace("Stock: ", "");            
+      dataItem = dataSourceCart.get(id);
+      dataSourceCart.remove(dataItem);
+      dataSourceCart.fetch(function(){
+        var data = dataSourceCart.data();
+        var sum = 0;
+        console.log(data);
+        data.forEach(function(item) {                  
+          sum += parseInt(item.Price.replace("$", "").replace(",", ""));
+        });                
+        $("#cartTotal").html(formatter.format(sum));
+      });      
+      e.target.previousElementSibling.value = Number(e.target.previousElementSibling.value) - 1
+      e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1);      
+      if( e.target.previousElementSibling.value == 0 ){                  
+        e.target.disabled = true;
+      }                            
+      notification.show({ title: "Cart Updated!", message: "Item has been removed!"}, "error");
+    }
+  });    
+  
+  // Binding
+  kendo.bind($("#example"), viewModelListview);
 </script>
