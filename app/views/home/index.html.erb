@@ -208,14 +208,7 @@
 
   // Var Counter
   var itemCounter = 0;
-
-  // Currency Format
-  var formatter = new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: 2,              
-  });  
-
+  
   // Kendo Observable
   var viewModelListview = kendo.observable({ 
     cartItems: dataSourceCart,       
