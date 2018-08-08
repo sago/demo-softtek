@@ -56,7 +56,7 @@
 <!-- Items Cart List -->
 <script type="text/x-kendo-template" id="cart-list-view-template">
   <li>    
-    <span>#:Name#</span>&nbsp;&nbsp;<span>#:Price#</span>&nbsp;&nbsp;<span>#:Qtty#</span>
+    <span>#:Name#</span>&nbsp;&nbsp;<span>#:kendo.toString(Price, "c")#</span>&nbsp;&nbsp;<span>#:Qtty#</span>
   </li>
 </script>  
 
@@ -214,9 +214,7 @@
     style: 'currency',
     currency: 'MXN',
     minimumFractionDigits: 2,              
-  });
-
-
+  });  
 
   // Kendo Observable
   var viewModelListview = kendo.observable({ 
@@ -224,6 +222,7 @@
     items: dataSourceItems,   
     totalSum: 0, 
     clickInc : function(e){      
+      kendo.culture("en-US");  
       itemCounter += 1;      
       var id = e.data.Id;
       var name = e.data.Name;
@@ -247,7 +246,7 @@
           var sum = 0;          
           data.forEach(function(item) {            
             sum += (item.Price * item.Qtty);
-            viewModelListview.set("totalSum", sum);
+            viewModelListview.set("totalSum", kendo.toString(sum, "c"));
           });                          
         });      
         e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + e.data.Stock; 
@@ -258,6 +257,7 @@
       
     },
     clickDec: function(e){
+      kendo.culture("en-US");
       itemCounter -= 1;
       var id = e.data.Id;
       var name = e.data.Name;
@@ -276,7 +276,7 @@
         var sum = 0;        
         data.forEach(function(item) {                        
           sum += (item.Price * item.Qtty);
-          viewModelListview.set("totalSum", sum);
+          viewModelListview.set("totalSum", kendo.toString(sum, "c"));
         });                        
       });      
       e.target.previousElementSibling.value = Number(e.target.previousElementSibling.value) - 1
