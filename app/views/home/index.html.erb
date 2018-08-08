@@ -17,11 +17,15 @@
           <div class="col-3 cart">
             <div class="cartChart">
               <h4>Cart</h4>
+              <ul data-role="listview" 
+                data-template="cart-list-view-template" 
+                data-bind="source: cartItems">
+              </ul>              
               <div class="row">
                 <div class="col-12">
                   <label>Total:</label>
                   </br>
-                  <p id="cartTotal">
+                  <p data-bind="text: totalSum">
                   </p>
                 </div>
               </div>
@@ -49,6 +53,13 @@
   </div>
 </script>
     
+<!-- Items Cart List -->
+<script type="text/x-kendo-template" id="cart-list-view-template">
+  <li>    
+    <span>#:Name#</span>&nbsp;&nbsp;<span>#:Price#</span>&nbsp;&nbsp;<span>#:Qtty#</span>
+  </li>
+</script>  
+
 <!-- ListView Template -->
 <script type="text/x-kendo-template" id="list-view-template">
     # var availability = Availability;#
@@ -205,53 +216,71 @@
     minimumFractionDigits: 2,              
   });
 
+
+
   // Kendo Observable
-  var viewModelListview = kendo.observable({    
-    items: dataSourceItems,
+  var viewModelListview = kendo.observable({ 
+    cartItems: dataSourceCart,       
+    items: dataSourceItems,   
+    totalSum: 0, 
     clickInc : function(e){      
       itemCounter += 1;      
-      var id = e.target.parentElement.parentElement.children[0].children[1].textContent;
-      var name = e.target.parentElement.parentElement.children[0].children[0].textContent;
-      var price = e.target.parentElement.parentElement.children[0].children[4].textContent;
-      var stock = e.target.parentElement.parentElement.children[0].children[3].textContent.replace("Stock: ", "");      
-      e.target.nextElementSibling.value = Number(e.target.nextElementSibling.value) + 1
-      var qtty = e.target.nextElementSibling.value;
-
-      dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price })
-      dataSourceCart.sync
+      var id = e.data.Id;
+      var name = e.data.Name;
+      var price = e.data.Price;
       
-      dataSourceCart.fetch(function(){
-        var data = dataSourceCart.data();
-        var sum = 0;
-        console.log(data);
-        data.forEach(function(item) {                  
-          sum += parseInt(item.Price.replace("$", "").replace(",", ""));
-        });                
-        $("#cartTotal").html(formatter.format(sum));
-      });              
-      e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + (parseInt(stock) - 1); 
-      e.target.nextElementSibling.nextElementSibling.disabled = false
-      notification.show({ title: "Cart Updated!", message: "New item has been added!"}, "info");
+      if(e.data.Stock == 0 ){
+        notification.show({ title: "Not Available!", message: "Out of Stock!"}, "error");
+      }else{
+        var stock = e.data.Stock;                
+        e.data.Stock = e.data.Stock - 1;
+        e.target.nextElementSibling.value = Number(e.target.nextElementSibling.value) + 1
+        if(dataSourceCart.get(id)){          
+          dataSourceCart.get(id).Qtty += 1;
+        }else{          
+          dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price, Qtty: 1})
+        }
+        dataSourceCart.sync
+
+        dataSourceCart.fetch(function(){
+          var data = dataSourceCart.data();
+          var sum = 0;          
+          data.forEach(function(item) {            
+            sum += (item.Price * item.Qtty);
+            viewModelListview.set("totalSum", sum);
+          });                          
+        });      
+        e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + e.data.Stock; 
+        e.target.nextElementSibling.nextElementSibling.disabled = false
+
+        notification.show({ title: "Cart Updated!", message: "New item has been added!"}, "info");
+      }            
+      
     },
     clickDec: function(e){
       itemCounter -= 1;
-      var id = e.target.parentElement.parentElement.children[0].children[1].textContent;
-      var name = e.target.parentElement.parentElement.children[0].children[0].textContent;
-      var price = e.target.parentElement.parentElement.children[0].children[4].textContent;
-      var stock = e.target.parentElement.parentElement.children[0].children[3].textContent.replace("Stock: ", "");            
+      var id = e.data.Id;
+      var name = e.data.Name;
+      var price = e.data.Price;
+      var stock = e.data.Stock;
+      e.data.Stock = e.data.Stock + 1
       dataItem = dataSourceCart.get(id);
-      dataSourceCart.remove(dataItem);
+      if(dataSourceCart.get(id) && dataSourceCart.get(id).Qtty > 1){          
+        dataSourceCart.get(id).Qtty -= 1;        
+      }else{          
+        dataSourceCart.remove(dataItem);        
+      }
+      
       dataSourceCart.fetch(function(){
         var data = dataSourceCart.data();
-        var sum = 0;
-        console.log(data);
-        data.forEach(function(item) {                  
-          sum += parseInt(item.Price.replace("$", "").replace(",", ""));
-        });                
-        $("#cartTotal").html(formatter.format(sum));
+        var sum = 0;        
+        data.forEach(function(item) {                        
+          sum += (item.Price * item.Qtty);
+          viewModelListview.set("totalSum", sum);
+        });                        
       });      
       e.target.previousElementSibling.value = Number(e.target.previousElementSibling.value) - 1
-      e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + (parseInt(stock) + 1);      
+      e.target.parentElement.parentElement.children[0].children[3].textContent = "Stock: " + e.data.Stock;      
       if( e.target.previousElementSibling.value == 0 ){                  
         e.target.disabled = true;
       }                            
@@ -260,5 +289,5 @@
   });    
   
   // Binding
-  kendo.bind($("#example"), viewModelListview);
+  kendo.bind($("#example"), viewModelListview);  
 </script>
