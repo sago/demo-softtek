@@ -205,32 +205,35 @@
   
   // DataSource Total
   var dataSourceCart = new kendo.data.DataSource({aggregate: [{ field: "Price", aggregate: "sum" }] });
-
-  // Var Counter
-  var itemCounter = 0;
   
+  // Validator
+  var kendoValidator;
+
   // Kendo Observable
   var viewModelListview = kendo.observable({ 
     cartItems: dataSourceCart,       
     items: dataSourceItems,   
     totalSum: 0, 
     clickInc : function(e){      
-      kendo.culture("en-US");  
-      itemCounter += 1;      
+      kendo.culture("en-US");        
       var id = e.data.Id;
       var name = e.data.Name;
-      var price = e.data.Price;
-      
-      if(e.data.Stock == 0 ){
+      var price = e.data.Price;      
+      if(e.data.Stock == 0 ){        
         notification.show({ title: "Not Available!", message: "Out of Stock!"}, "error");
+        e.target.disabled = true;
       }else{
-        var stock = e.data.Stock;                
+        var stock = e.data.Stock;
         e.data.Stock = e.data.Stock - 1;
+        if(e.data.Stock == 0){
+          e.data.Availability = false;          
+          e.target.parentElement.parentElement.children[0].children[5].textContent = "Not Available";
+        }
         e.target.nextElementSibling.value = Number(e.target.nextElementSibling.value) + 1
         if(dataSourceCart.get(id)){          
           dataSourceCart.get(id).Qtty += 1;
         }else{          
-          dataSourceCart.add({ id: id, itemc: itemCounter, Name: name, Price: price, Qtty: 1})
+          dataSourceCart.add({ id: id, Name: name, Price: price, Qtty: 1})
         }
         dataSourceCart.sync
 
@@ -250,8 +253,7 @@
       
     },
     clickDec: function(e){
-      kendo.culture("en-US");
-      itemCounter -= 1;
+      kendo.culture("en-US");      
       var id = e.data.Id;
       var name = e.data.Name;
       var price = e.data.Price;
@@ -259,9 +261,12 @@
       e.data.Stock = e.data.Stock + 1
       dataItem = dataSourceCart.get(id);
       if(dataSourceCart.get(id) && dataSourceCart.get(id).Qtty > 1){          
-        dataSourceCart.get(id).Qtty -= 1;        
+        dataSourceCart.get(id).Qtty -= 1;
+        e.target.previousElementSibling.previousElementSibling.disabled = false;
+        e.target.parentElement.parentElement.children[0].children[5].textContent = "Available";
       }else{          
-        dataSourceCart.remove(dataItem);        
+        dataSourceCart.remove(dataItem);
+        viewModelListview.set("totalSum", 0);
       }
       
       dataSourceCart.fetch(function(){
